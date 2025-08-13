@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alessandro Gay Clicker</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            text-align: center;
+            background-color: #ffebf3;
+            color: #ff1493;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        #container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(255, 20, 147, 0.5);
+        }
+        
+        h1 {
+            color: #ff1493;
+            text-shadow: 2px 2px 4px rgba(255, 20, 147, 0.3);
+        }
+        
+        #click-button {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background-color: #ff69b4;
+            border: none;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.7);
+            transition: transform 0.1s, box-shadow 0.1s;
+            margin: 20px 0;
+            background-image: url('https://placeholder.com/200');
+            background-size: cover;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #click-button:hover {
+            background-color: #ff1493;
+        }
+        
+        #click-button:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+        }
+        
+        #counter {
+            font-size: 36px;
+            margin: 20px 0;
+            color: #ff1493;
+        }
+        
+        #shop {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .upgrade {
+            background-color: #ffb6c1;
+            border: 2px solid #ff69b4;
+            border-radius: 10px;
+            padding: 10px;
+            width: 180px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .upgrade:hover {
+            background-color: #ff69b4;
+            color: white;
+        }
+        
+        .upgrade:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        #achievements {
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .achievement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff0f5;
+            border-radius: 8px;
+        }
+        
+        .achievement.locked {
+            opacity: 0.6;
+        }
+        
+        .achievement-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            background-color: #ff69b4;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        #stats {
+            margin-top: 30px;
+            background-color: #fff0f5;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        #prestige {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #9370db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            display: none;
+        }
+        
+        #prestige:hover {
+            background-color: #8a2be2;
+        }
+        
+        #rainbow-mode {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Alessandro Gay Clicker</h1>
+        <div id="counter">Gayness: 0</div>
+        <button id="click-button">Cliccami!</button>
+        
+        <div id="stats">
+            <p>Click totali: <span id="total-clicks">0</span></p>
+            <p>Gayness per secondo: <span id="gps">0</span></p>
+            <p>Moltiplicatore: <span id="multiplier">1</span>x</p>
+        </div>
+        
+        <h2>Upgrade Shop</h2>
+        <div id="shop">
+            <button class="upgrade" id="upgrade1" onclick="buyUpgrade(1)">
+                <h3>Amico Gay</h3>
+                <p>+0.1 Gayness/s</p>
+                <p>Costo: 10 Gayness</p>
+            </button>
+            
+            <button class="upgrade" id="upgrade2" onclick="buyUpgrade(2)">
+                <h3>Bandiera Arcobaleno</h3>
+                <p>+0.5 Gayness/s</p>
+                <p>Costo: 50 Gayness</p>
+            </button>
+            
+            <button class="upgrade" id="upgrade3" onclick="buyUpgrade(3)">
+                <h3>Disco Ball</h3>
+                <p>+2 Gayness/s</p>
+                <p>Costo: 200 Gayness</p>
+            </button>
+            
+            <button class="upgrade" id="upgrade4" onclick="buyUpgrade(4)">
+                <h3>Parata del Gay Pride</h3>
+                <p>+10 Gayness/s</p>
+                <p>Costo: 1000 Gayness</p>
+            </button>
+            
+            <button class="upgrade" id="upgrade5" onclick="buyUpgrade(5)">
+                <h3>Moltiplicatore di Gayness</h3>
+                <p>Raddoppia la Gayness per click</p>
+                <p>Costo: 500 Gayness</p>
+            </button>
+        </div>
+        
+        <h2>Achievements</h2>
+        <div id="achievements">
+            <div class="achievement locked" id="ach1">
+                <div class="achievement-icon">1</div>
+                <div>
+                    <h3>Primi passi</h3>
+                    <p>Raggiungi 10 Gayness</p>
+                </div>
+            </div>
+            
+            <div class="achievement locked" id="ach2">
+                <div class="achievement-icon">2</div>
+                <div>
+                    <h3>Esploratore</h3>
+                    <p>Raggiungi 100 Gayness</p>
+                </div>
+            </div>
+            
+            <div class="achievement locked" id="ach3">
+                <div class="achievement-icon">3</div>
+                <div>
+                    <h3>Maestro del Click</h3>
+                    <p>Fai 100 click</p>
+                </div>
+            </div>
+            
+            <div class="achievement locked" id="ach4">
+                <div class="achievement-icon">4</div>
+                <div>
+                    <h3>Rainbow Power</h3>
+                    <p>Acquista tutti gli upgrade</p>
+                </div>
+            </div>
+        </div>
+        
+        <button id="prestige" onclick="prestige()">PRESTIGE (Reset per bonus permanenti)</button>
+    </div>
+    
+    <div id="rainbow-mode"></div>
+    
+    <audio id="gay-sound" src="gay.wav" preload="auto"></audio>
+    
+    <script>
+        // Variabili di gioco
+        let gayness = 0;
+        let totalClicks = 0;
+        let gayPerSecond = 0;
+        let multiplier = 1;
+        let prestigePoints = 0;
+        let upgrades = [
+            { id: 1, owned: 0, cost: 10, gps: 0.1, name: "Amico Gay" },
+            { id: 2, owned: 0, cost: 50, gps: 0.5, name: "Bandiera Arcobaleno" },
+            { id: 3, owned: 0, cost: 200, gps: 2, name: "Disco Ball" },
+            { id: 4, owned: 0, cost: 1000, gps: 10, name: "Parata del Gay Pride" },
+            { id: 5, owned: 0, cost: 500, gps: 0, name: "Moltiplicatore di Gayness", isMultiplier: true }
+        ];
+        
+        let achievements = [
+            { id: 1, unlocked: false, condition: () => gayness >= 10, name: "Primi passi", description: "Raggiungi 10 Gayness" },
+            { id: 2, unlocked: false, condition: () => gayness >= 100, name: "Esploratore", description: "Raggiungi 100 Gayness" },
+            { id: 3, unlocked: false, condition: () => totalClicks >= 100, name: "Maestro del Click", description: "Fai 100 click" },
+            { id: 4, unlocked: false, condition: () => upgrades.every(u => u.owned > 0), name: "Rainbow Power", description: "Acquista tutti gli upgrade" }
+        ];
+        
+        // Elementi DOM
+        const counterElement = document.getElementById('counter');
+        const clickButton = document.getElementById('click-button');
+        const totalClicksElement = document.getElementById('total-clicks');
+        const gpsElement = document.getElementById('gps');
+        const multiplierElement = document.getElementById('multiplier');
+        const prestigeButton = document.getElementById('prestige');
+        const gaySound = document.getElementById('gay-sound');
+        const rainbowMode = document.getElementById('rainbow-mode');
+        
+        // Inizializzazione
+        updateUI();
+        updateShop();
+        checkAchievements();
+        
+        // Game loop
+        setInterval(gameLoop, 1000);
+        
+        // Funzioni
+        function gameLoop() {
+            gayness += gayPerSecond;
+            updateUI();
+            checkAchievements();
+            
+            // Controlla se sbloccare il pulsante di prestige
+            if (gayness >= 10000 && prestigeButton.style.display === 'none') {
+                prestigeButton.style.display = 'inline-block';
+            }
+        }
+        
+        function updateUI() {
+            counterElement.textContent = `Gayness: ${Math.floor(gayness)}`;
+            totalClicksElement.textContent = totalClicks;
+            gpsElement.textContent = gayPerSecond.toFixed(1);
+            multiplierElement.textContent = multiplier;
+            
+            // Aggiorna il testo del pulsante di prestige
+            if (gayness >= 10000) {
+                const pp = Math.floor(gayness / 10000);
+                prestigeButton.textContent = `PRESTIGE (+${pp} Punti Prestige)`;
+            }
+        }
+        
+        function updateShop() {
+            upgrades.forEach(upgrade => {
+                const button = document.getElementById(`upgrade${upgrade.id}`);
+                button.querySelector('p:last-child').textContent = `Costo: ${Math.floor(upgrade.cost)} Gayness`;
+                button.disabled = gayness < upgrade.cost;
+            });
+        }
+        
+        function click() {
+            // Riproduci il suono
+            gaySound.currentTime = 0;
+            gaySound.play();
+            
+            // Aggiungi gayness
+            gayness += 1 * multiplier;
+            totalClicks += 1;
+            
+            // Effetto visivo sul pulsante
+            clickButton.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                clickButton.style.transform = 'scale(1)';
+            }, 100);
+            
+            // Crea effetto di particelle
+            createParticle();
+            
+            updateUI();
+            updateShop();
+            checkAchievements();
+        }
+        
+        function buyUpgrade(id) {
+            const upgrade = upgrades.find(u => u.id === id);
+            
+            if (gayness >= upgrade.cost) {
+                gayness -= upgrade.cost;
+                upgrade.owned += 1;
+                
+                if (upgrade.isMultiplier) {
+                    multiplier *= 2;
+                } else {
+                    gayPerSecond += upgrade.gps;
+                }
+                
+                // Aumenta il costo per il prossimo acquisto
+                upgrade.cost = Math.floor(upgrade.cost * 1.5);
+                
+                // Aggiorna l'UI
+                updateUI();
+                updateShop();
+                checkAchievements();
+                
+                // Effetto speciale se è l'ultimo upgrade
+                if (upgrades.every(u => u.owned > 0)) {
+                    activateRainbowMode();
+                }
+            }
+        }
+        
+        function checkAchievements() {
+            achievements.forEach(ach => {
+                if (!ach.unlocked && ach.condition()) {
+                    ach.unlocked = true;
+                    unlockAchievement(ach.id);
+                }
+            });
+        }
+        
+        function unlockAchievement(id) {
+            const achElement = document.getElementById(`ach${id}`);
+            achElement.classList.remove('locked');
+            
+            // Effetto visivo
+            achElement.style.animation = 'none';
+            void achElement.offsetWidth; // Trigger reflow
+            achElement.style.animation = 'pulse 0.5s 3';
+            
+            // Bonus per achievement
+            switch(id) {
+                case 1:
+                    gayPerSecond += 0.2;
+                    break;
+                case 2:
+                    gayPerSecond += 1;
+                    break;
+                case 3:
+                    multiplier += 0.5;
+                    break;
+                case 4:
+                    gayPerSecond *= 2;
+                    break;
+            }
+            
+            updateUI();
+        }
+        
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.style.position = 'absolute';
+            particle.style.width = '10px';
+            particle.style.height = '10px';
+            particle.style.backgroundColor = getRandomRainbowColor();
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            
+            const buttonRect = clickButton.getBoundingClientRect();
+            const x = buttonRect.left + buttonRect.width/2 + (Math.random() - 0.5) * 30;
+            const y = buttonRect.top + buttonRect.height/2 + (Math.random() - 0.5) * 30;
+            
+            particle.style.left = `${x}px`;
+            particle.style.top = `${y}px`;
+            
+            document.body.appendChild(particle);
+            
+            // Animazione
+            const animation = particle.animate([
+                { transform: 'translateY(0)', opacity: 1 },
+                { transform: `translateY(${-Math.random() * 100 - 50}px) translateX(${(Math.random() - 0.5) * 100}px)`, opacity: 0 }
+            ], {
+                duration: 1000 + Math.random() * 1000,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+            });
+            
+            animation.onfinish = () => particle.remove();
+        }
+        
+        function getRandomRainbowColor() {
+            const colors = [
+                '#ff0000', '#ff7f00', '#ffff00', '#00ff00', 
+                '#0000ff', '#4b0082', '#8b00ff', '#ff1493'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        function activateRainbowMode() {
+            rainbowMode.style.opacity = '0.2';
+            
+            // Crea particelle arcobaleno casuali
+            setInterval(() => {
+                if (Math.random() > 0.7) {
+                    createRandomParticle();
+                }
+            }, 300);
+        }
+        
+        function createRandomParticle() {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.width = `${Math.random() * 20 + 5}px`;
+            particle.style.height = particle.style.width;
+            particle.style.backgroundColor = getRandomRainbowColor();
+            particle.style.borderRadius = '50%';
+            particle.style.pointerEvents = 'none';
+            
+            particle.style.left = `${Math.random() * window.innerWidth}px`;
+            particle.style.top = `${window.innerHeight + 10}px`;
+            
+            document.body.appendChild(particle);
+            
+            // Animazione
+            const animation = particle.animate([
+                { transform: 'translateY(0)', opacity: 0.8 },
+                { transform: `translateY(${-window.innerHeight - 100}px) translateX(${(Math.random() - 0.5) * 200}px)`, opacity: 0 }
+            ], {
+                duration: 2000 + Math.random() * 3000,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+            });
+            
+            animation.onfinish = () => particle.remove();
+        }
+        
+        function prestige() {
+            const points = Math.floor(gayness / 10000);
+            prestigePoints += points;
+            
+            // Reset del gioco con bonus
+            gayness = 0;
+            totalClicks = 0;
+            gayPerSecond = 0;
+            multiplier = 1 + prestigePoints * 0.2; // Bonus del 20% per punto prestigio
+            
+            upgrades.forEach(upgrade => {
+                upgrade.owned = 0;
+                upgrade.cost = upgrade.id === 1 ? 10 : 
+                                upgrade.id === 2 ? 50 : 
+                                upgrade.id === 3 ? 200 : 
+                                upgrade.id === 4 ? 1000 : 
+                                upgrade.id === 5 ? 500 : upgrade.cost;
+            });
+            
+            // Mantieni gli achievement sbloccati
+            achievements.forEach(ach => {
+                ach.unlocked = ach.condition();
+            });
+            
+            // Nascondi di nuovo il pulsante di prestige
+            prestigeButton.style.display = 'none';
+            
+            updateUI();
+            updateShop();
+        }
+        
+        // Event listeners
+        clickButton.addEventListener('click', click);
+        
+        // Animazioni CSS aggiuntive
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+            
+            @keyframes rainbow {
+                0% { background-color: #ff0000; }
+                14% { background-color: #ff7f00; }
+                28% { background-color: #ffff00; }
+                42% { background-color: #00ff00; }
+                57% { background-color: #0000ff; }
+                71% { background-color: #4b0082; }
+                85% { background-color: #8b00ff; }
+                100% { background-color: #ff1493; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
